@@ -92,34 +92,34 @@ def main() -> int:
             continue
         f = t['fields']
         # —— 记录条目整理：JSON 里「工程部位：…」已折进记录开头（同一条），
-        # 无需再折；剥旧编号后统一重编；空记录换成「/」
+        # 无需再折；剥旧编号后统一重编；空记录留白（不填「/」）
         recs = []
         for r in t['records']:
             r2 = re.sub(r'^\d+、', '', r) if re.match(r'^\d+、', r) else r
             if r2.strip() and r2.strip() != '/':
                 recs.append(r2)
-        recs = recs or ['/']
+        recs = recs or []
         recs = [f'{i}、{r}' for i, r in enumerate(recs, 1)]
         new_rows = list(rows)
-        date_txt = a.title_date or (f.get('date') or '/')
+        date_txt = a.title_date or (f.get('date') or '')
         if date_txt not in ('/', ''):
             date_txt = f'\u27e6{date_txt}\u27e7'
         new_rows[0] = set_row_texts(rows[0], ['日\u3000期', date_txt, '天\u3000气',
-                                              f.get('weather', '/'), '环境温度', f.get('temperature', '/')])
+                                              f.get('weather', ''), '环境温度', f.get('temperature', '')])
         # 项目名称（隧道名）来自台账标题/工程名称 → 标红
         project = (f.get('project') or '').strip()
-        proj_txt = f'\u27e6{project}\u27e7' if project and project != '/' else '/'
+        proj_txt = f'\u27e6{project}\u27e7' if project and project != '/' else ''
         # 旁站内容整段放进同一个格（r1 的第 4 格），r2/r3 留空；
         # postprocess 会把这三行的第 4 格纵向合并成一格
-        content = (f.get('content') or '/').strip() or '/'
+        content = (f.get('content') or '').strip()
         # 旁站内容整段都来自台账，整段标红（不再逐段包记号）
         if content != '/' and '\u27e6' not in content:
             content = f'\u27e6{content}\u27e7'
         new_rows[1] = set_row_texts(rows[1], ['旁站项目名称', proj_txt, '', '旁站内容', content])
         new_rows[2] = set_row_texts(rows[2], ['', '', '', '', ''])
         new_rows[3] = set_row_texts(rows[3], ['', '', '', '', ''])
-        new_rows[4] = set_row_texts(rows[4], ['旁站开始时间', f.get('start', '/'), '',
-                                              '旁站结束时间', f.get('end', '/')])
+        new_rows[4] = set_row_texts(rows[4], ['旁站开始时间', f.get('start', ''), '',
+                                              '旁站结束时间', f.get('end', '')])
         new_rows[5] = set_row_texts(rows[5], ['旁站过程记录：'])
         # 模板 r6-r13 共 8 格：超过 8 条的记录合并进第 8 格（用空行分隔），不丢内容
         for i in range(8):

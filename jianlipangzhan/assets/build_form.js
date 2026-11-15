@@ -1,3 +1,6 @@
+// v14（0.3.0）：缺项改留白——天气、环境温度、其他说明、发现问题不再填「/」。
+//   表头/落款四个值的红色 run 内置在 assets/template-20rows.docx；本脚本重建模板时
+//   不生成颜色，重建后必须补红（见 SKILL.md 第 3 步 B 路），否则 postprocess 自检会 FAIL。
 // v13：按用户 m00964 + m00985 重排
 //   1) 旁站过程记录模块：模块名单独占一行；每一条记录各占一个整行（通栏），互不接排
 //   2) 「是否」类三项（人员到位 / 机械压力表 / 原材料检验）台账无数据 → 整条删除
@@ -33,7 +36,7 @@ const recs = [
 const E = '';
 const rows = [];
 // r0 日期行
-rows.push(['日　期', '2026年11月5日', '天　气', '/', '环境温度', '/']);
+rows.push(['日　期', '2026年11月5日', '天　气', '', '环境温度', '']);
 // r1..r3 旁站项目名称 / 旁站内容（三台阶各一行）
 rows.push(['旁站项目名称', '淘金山隧道', '', '旁站内容', '上台阶：107028.2～107031.8', '']);
 rows.push([E, E, E, E, '中台阶左侧：107016.6～107019.6', '']);
@@ -45,8 +48,8 @@ rows.push(['旁站过程记录：', E, E, E, E, E]);
 // r6..r13 每条记录一行
 for (const t of recs) rows.push([t, E, E, E, E, E]);
 // 其他 / 发现
-rows.push(['其他需要说明的事情：/', E, E, E, E, E]);
-rows.push(['发现问题及处理意见：/', E, E, E, E, E]);
+rows.push(['其他需要说明的事情：', E, E, E, E, E]);
+rows.push(['发现问题及处理意见：', E, E, E, E, E]);
 // 间隔空行
 rows.push([E, E, E, E, E, E]);
 // 签字三行
@@ -104,8 +107,8 @@ table.setCellText(4, 3, '旁站结束时间');
 table.setCellText(4, 4, '2026-11-05 18:20');
 table.setCellText(5, 0, '旁站过程记录：');
 for (let i = 0; i < recs.length; i += 1) table.setCellText(6 + i, 0, recs[i]);
-table.setCellText(14, 0, '其他需要说明的事情：/');
-table.setCellText(15, 0, '发现问题及处理意见：/');
+table.setCellText(14, 0, '其他需要说明的事情：');
+table.setCellText(15, 0, '发现问题及处理意见：');
 table.setCellText(16, 0, '');
 table.setCellText(17, 0, '承包单位：上海工程局 SSSG-8 标项目经理部　　项目监理机构：深汕铁路 SSJL-8 标监理项目部');
 table.setCellText(18, 0, '质 检 员：＿＿＿＿＿＿＿＿　　旁站监理人员：＿＿＿＿＿＿＿＿');

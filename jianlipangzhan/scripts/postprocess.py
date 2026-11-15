@@ -239,12 +239,25 @@ def rebuild_table(table: str, stats, table_no: int = 0) -> str:
             stats['bad'] += 1
             idx += spec['src']
             continue
-        texts = []
+        raw_texts = []
         for r in consumed:
             for c in TC_RE.findall(r):
-                t = text_of(c)
-                if t.strip():
-                    texts.append(t)
+                raw_texts.append(text_of(c))
+        # 非合并行：源格数与输出格数（非纵向续格）相等时保留空文本格——天气/环境温度行
+        # 靠空格占位，0.3.0 去掉「/」后若按 strip() 丢掉，后面的标签会整体左移。
+        # 源里多出空格时仍只取非空段：旁站内容/结束时间等格会拆成「空格 + 内容」，
+        # 全保留会把真正内容挤出输出格。纵向续格（全 C）不参与取文本；过程记录合并格只取非空段。
+        skip_text = (not spec.get('merge_paras')
+                     and all(vm == C for _span, vm in spec_cells))
+        n_pop = sum(1 for _span, vm in spec_cells if vm != C)
+        if spec.get('merge_paras'):
+            texts = [t for t in raw_texts if t.strip()]
+        elif skip_text:
+            texts = []
+        elif len(raw_texts) == n_pop:
+            texts = raw_texts
+        else:
+            texts = [t for t in raw_texts if t.strip()]
         tpl = TC_RE.findall(consumed[0])[0]
         head = consumed[0][:consumed[0].index('<w:tc>')]
         last = consumed[-1]
@@ -415,6 +428,16 @@ def main() -> int:
     if any(t not in xml for t in CHECKS):
         ok = False
 
+    # 0.3.0 自检：4 处缺项留白（无独立「/」、无「：/」）；表头/落款四个值红、标签黑。
+    n_slash = xml.count('<w:t>/</w:t>') + xml.count('<w:t xml:space="preserve">/</w:t>')
+    n_colon_slash = xml.count('：/')
+    HEADER_VALUES = ['新建深汕铁路工程', 'SSSG-8 标',
+                     '上海工程局 SSSG-8 标项目经理部', '深汕铁路 SSJL-8 标监理项目部']
+    n_hdr = sum(xml.count(RED_RUN_PR + '<w:t xml:space="preserve">' + v + '</w:t>')
+                for v in HEADER_VALUES)
+    if n_slash or n_colon_slash or n_hdr != len(HEADER_VALUES):
+        ok = False
+
     blobs['word/document.xml'] = xml.encode('utf-8')
     with zipfile.ZipFile(dst, 'w', zipfile.ZIP_DEFLATED) as z:
         for n in names:
@@ -422,7 +445,8 @@ def main() -> int:
 
     print(f'rebuilt_rows={len(ROW_SPECS)} bad_rows={stats["bad"]} '
           f'already={stats["already"]} page=A4 content_width={CONTENT_W} '
-          f'checks={n_checked}/{len(CHECKS)} selfcheck={"PASS" if ok else "FAIL"}')
+          f'checks={n_checked}/{len(CHECKS)} blanks={n_slash + n_colon_slash} '
+          f'header_red={n_hdr}/4 selfcheck={"PASS" if ok else "FAIL"}')
     return 0 if ok else 1
 
 

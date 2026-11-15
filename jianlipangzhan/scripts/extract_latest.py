@@ -12,7 +12,7 @@
   2. 旁站项目名称取该模块所在 sheet 的置顶标题（r0）。
   3. 旁站的开始/结束时间一律取该工序自己的操作起止时间；取不到就说明这一行没有旁站时间，
      换更早的日期，直到取到为止。
-  4. 台账是唯一数据源，不补全、不推断；取不到的字段填 "/"。
+  4. 台账是唯一数据源，不补全、不推断；取不到的字段留白（不填 "/"）。
   5. 台账原文一律包 ⟦…⟧ 记号，后处理转红色。
 
 输出 JSON（stdout）：
@@ -121,13 +121,13 @@ def parse_date(v):
 def fmt_date(v):
     if isinstance(v, (datetime.datetime, datetime.date)):
         return v.strftime('%Y-%m-%d')
-    return _clean_txt(v, 30) or '/'
+    return _clean_txt(v, 30) or ''
 
 
 def fmt_dt(v):
     if isinstance(v, datetime.datetime):
         return v.strftime('%Y-%m-%d %H:%M') if (v.hour or v.minute) else v.strftime('%Y-%m-%d')
-    return _clean_txt(v, 30) or '/'
+    return _clean_txt(v, 30) or ''
 
 
 def _as_time(v):
@@ -246,9 +246,9 @@ def _mile(vals):
 
 
 def tf(dt, base_date=None):
-    """旁站时间显示：与记录日期同天写 HH:MM，跨天写 MM-DD HH:MM。"""
+    """旁站时间显示：与记录日期同天写 HH:MM，跨天写 MM-DD HH:MM；取不到留白。"""
     if not isinstance(dt, datetime.datetime):
-        return '/'
+        return ''
     if base_date and dt.date() == base_date.date():
         return mk(dt.strftime('%H:%M'))
     return mk(dt.strftime('%m-%d %H:%M'))
@@ -256,12 +256,12 @@ def tf(dt, base_date=None):
 
 def make_table(no, project, date, content, start, end, records, note='', source=None):
     recs = [f'{i}、{r}' for i, r in enumerate([x for x in records if x], 1)]
-    fields = {'date': fmt_date(date) if date else '/',
-              'weather': '/', 'temperature': '/',
-              'project': project or '/',
-              'content': content or '/',
-              'start': start or '/', 'end': end or '/'}
-    tb = dict(no=no, title=TITLES[no], fields=fields, records=recs or ['1、/'])
+    fields = {'date': fmt_date(date) if date else '',
+              'weather': '', 'temperature': '',
+              'project': project or '',
+              'content': content or '',
+              'start': start or '', 'end': end or ''}
+    tb = dict(no=no, title=TITLES[no], fields=fields, records=recs)
     if note:
         tb['missing_reason'] = note
     if source:
@@ -1330,8 +1330,8 @@ def scan_peiliao(book, mode, pours=None):
         _src8.append(src(f'监理台账/{pour_hit["sheet"]}', pour_hit.get('r'),
                          f'c{pour_hit.get("col", 0) + 1} 混凝土浇筑时间（旁站起止时间来源）'))
     tables[8] = make_table(8, _pj8, latest,
-                           mk(_cv(v, hc, '浇筑部位')), tf(s_dt, latest) if s_dt else '/',
-                           tf(e_dt, latest) if e_dt else '/', recs,
+                           mk(_cv(v, hc, '浇筑部位')), tf(s_dt, latest) if s_dt else '',
+                           tf(e_dt, latest) if e_dt else '', recs,
                            '' if s_dt else '配料单无浇筑起止时间，且监理台账未匹配到同日浇筑记录',
                            source=[x for x in _src8 if x])
     return tables, warnings
