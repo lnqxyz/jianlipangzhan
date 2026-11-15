@@ -68,12 +68,25 @@ ROW_SPECS = [
 ]
 SRC_ROWS = sum(s['src'] for s in ROW_SPECS)
 
-# 「旁站过程记录」格末尾的固定三条检查项（非台账数据；是☑ 为既定口径）
+# 「旁站过程记录」格末尾的固定三条检查项（题面文字来自需求文档 2.1，一个字不动）。
+# 勾选按台账依据判定：只有 CHECK_EVIDENCE 里列到的表/项才勾「是」并标红，
+# 其余一律「是□　否□」全黑、留手填（0.2.9 起）。
 CHECKS = [
-    '施工单位质检员、技术员、试验员等有关人员是否到位。\u3000\u3000是\u2611\u3000否\u25a1',
-    '施工机械、压力表状态是否良好。\u3000\u3000是\u2611\u3000否\u25a1',
-    '原材料是否经过检验。\u3000\u3000是\u2611\u3000否\u25a1',
+    '施工单位质检员、技术员、试验员等有关人员是否到位。',
+    '施工机械、压力表状态是否良好。',
+    '原材料是否经过检验。',
 ]
+
+# 依据表：表号 → 可勾「是」的检查项序号（1 人员 / 2 机械压力表 / 3 原材料）。
+# 出处：注浆台账 A5「注浆设备」+ Q6「注浆压力(MPa)」→ 表 2/4/5 的机械；
+# 配料单开盘单 B4 搅拌机编号 / L6 搅拌时间、开盘信息汇总 K/AC–AL 报告号
+# → 表 8 的机械与原材料。其余 8 张表三项在台账里都没有列，一律不勾。
+CHECK_EVIDENCE = {
+    2: {2},
+    4: {2},
+    5: {2},
+    8: {2, 3},
+}
 
 REC_NO_RE = re.compile(r'^\s*(\d+)、')
 
@@ -88,8 +101,15 @@ def next_check_no(texts):
     return n + 1
 
 
-def checks_from(start):
-    return [f'{start + i}、{t}' for i, t in enumerate(CHECKS)]
+def checks_from(start, table_no=0):
+    """三条检查项：有台账依据的画「⟦是☑⟧」（红），没有的画「是□」全黑留手填。"""
+    has = CHECK_EVIDENCE.get(table_no, set())
+    out = []
+    for i, t in enumerate(CHECKS, 1):
+        marks = ('\u3000\u3000⟦是☑⟧\u3000否□' if i in has
+                 else '\u3000\u3000是□\u3000否□')
+        out.append(f'{start + i - 1}、{t}{marks}')
+    return out
 
 
 def span_of(tc: str) -> int:
@@ -167,7 +187,7 @@ def build_multi_para_cell(tpl: str, span: int, texts, red_range=None) -> str:
     """一格多段：把 tpl 的所有段落替换成 texts 依次生成的段落。
 
     red_range=(start, end)：该区间内的段落整段标红（过程记录条目），
-    区间外保持「⟦⟧ 才红」或全黑——固定格头与三条检查项即靠此留黑。
+    区间外保持「⟦⟧ 才红」或全黑——固定格头留黑，检查项的「是☑」靠 ⟦⟧ 标红。
     """
     cell = rewrite_tcpr(tpl, span, N)
     paras = PARA_RE.findall(cell)
@@ -194,7 +214,7 @@ def set_row_height(row: str, height: int) -> str:
     return row.replace('<w:tr>', '<w:tr><w:trPr>' + new + '</w:trPr>', 1)
 
 
-def rebuild_table(table: str, stats) -> str:
+def rebuild_table(table: str, stats, table_no: int = 0) -> str:
     grid = re.search(r'<w:tblGrid>(.*?)</w:tblGrid>', table, re.S)
     if not grid:
         return table
@@ -236,7 +256,7 @@ def rebuild_table(table: str, stats) -> str:
         if spec.get('merge_paras'):
             built.append(build_multi_para_cell(
                 tpl, spec_cells[0][0],
-                texts + checks_from(next_check_no(texts)),
+                texts + checks_from(next_check_no(texts), table_no),
                 red_range=(1, len(texts))))  # 0 是「旁站过程记录：」固定格头，留黑
         else:
             red_cells = spec.get('red_cells', ())
@@ -317,9 +337,14 @@ def main() -> int:
     ap.add_argument('dst', help='输出 docx')
     ap.add_argument('--records', type=int, default=0,
                     help='旁站过程记录实际条目数（含模块名行，0=按样板 12 条算）')
+    ap.add_argument('--table-no', type=int, default=0,
+                    help='表序号 1–12；决定三条检查项里哪几项有台账依据可勾「是」（0=一律不勾）')
     a = ap.parse_args()
     if a.records < 0:
         print('--records 不能为负', file=sys.stderr)
+        return 2
+    if a.table_no and not 1 <= a.table_no <= 12:
+        print('--table-no 应在 1–12', file=sys.stderr)
         return 2
     src, dst = a.src, a.dst
     global RECORDS_N
@@ -345,7 +370,7 @@ def main() -> int:
     if len(tables) != 1:
         print(f'expected 1 table, got {len(tables)}', file=sys.stderr)
         return 1
-    xml = TBL_RE.sub(lambda m: rebuild_table(m.group(0), stats), xml, count=1)
+    xml = TBL_RE.sub(lambda m: rebuild_table(m.group(0), stats, a.table_no), xml, count=1)
     xml = strip_sign_borders(xml)
     xml = set_spacing(xml)
 
@@ -379,6 +404,17 @@ def main() -> int:
     if not re.search(r'<w:pgSz w:w="%d"' % PAGE_W, xml):
         ok = False
 
+    # 自检检查项：有依据的项必须是红 run 的「是☑」，其余必须是「是□」且不带红记号。
+    # 注意 make_para 输出时已去掉 ⟦⟧ 记号，只能按「是☑ + RED_RUN_PR」判红。
+    n_has = len(CHECK_EVIDENCE.get(a.table_no, set()))
+    n_checked = xml.count('是☑')
+    n_red = xml.count(RED_RUN_PR + '<w:t xml:space="preserve">是☑</w:t>')
+    n_open = xml.count('是□')
+    if n_checked != n_has or n_red != n_has or n_open != len(CHECKS) - n_has:
+        ok = False
+    if any(t not in xml for t in CHECKS):
+        ok = False
+
     blobs['word/document.xml'] = xml.encode('utf-8')
     with zipfile.ZipFile(dst, 'w', zipfile.ZIP_DEFLATED) as z:
         for n in names:
@@ -386,7 +422,7 @@ def main() -> int:
 
     print(f'rebuilt_rows={len(ROW_SPECS)} bad_rows={stats["bad"]} '
           f'already={stats["already"]} page=A4 content_width={CONTENT_W} '
-          f'selfcheck={"PASS" if ok else "FAIL"}')
+          f'checks={n_checked}/{len(CHECKS)} selfcheck={"PASS" if ok else "FAIL"}')
     return 0 if ok else 1
 
 
