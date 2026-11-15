@@ -52,7 +52,8 @@ N = ''
 ROW_SPECS = [
     # 行高(twip) cells                                   src  merge_paras
     dict(h=460,  cells=[(1, N)] * 6,                      src=1),   # 0 日期/天气/环境温度
-    dict(h=640,  cells=[(1, R), (2, R), (1, R), (2, R)],  src=1),   # 1 旁站项目名称/隧道名/旁站内容/整段内容（三行合并成一格）
+    dict(h=640,  cells=[(1, R), (2, R), (1, R), (2, R)],  src=1,   # 1 旁站项目名称/隧道名/旁站内容/整段内容（三行合并成一格）
+         red_cells=(3,)),
     dict(h=640,  cells=[(1, C), (2, C), (1, C), (2, C)],  src=1),   # 2 纵向续格
     dict(h=640,  cells=[(1, C), (2, C), (1, C), (2, C)],  src=1),   # 3 纵向续格
     dict(h=480,  cells=[(1, N), (2, N), (1, N), (2, N)],  src=1),   # 4 旁站开始/结束时间
@@ -69,10 +70,26 @@ SRC_ROWS = sum(s['src'] for s in ROW_SPECS)
 
 # 「旁站过程记录」格末尾的固定三条检查项（非台账数据；是☑ 为既定口径）
 CHECKS = [
-    '9、施工单位质检员、技术员、试验员等有关人员是否到位。\u3000\u3000是\u2611\u3000否\u25a1',
-    '10、施工机械、压力表状态是否良好。\u3000\u3000是\u2611\u3000否\u25a1',
-    '11、原材料是否经过检验。\u3000\u3000是\u2611\u3000否\u25a1',
+    '施工单位质检员、技术员、试验员等有关人员是否到位。\u3000\u3000是\u2611\u3000否\u25a1',
+    '施工机械、压力表状态是否良好。\u3000\u3000是\u2611\u3000否\u25a1',
+    '原材料是否经过检验。\u3000\u3000是\u2611\u3000否\u25a1',
 ]
+
+REC_NO_RE = re.compile(r'^\s*(\d+)、')
+
+
+def next_check_no(texts):
+    """检查项编号紧接已有过程记录，避免 1、2 之后跳 9、10、11。"""
+    n = 0
+    for t in texts:
+        m = REC_NO_RE.match(t)
+        if m:
+            n = max(n, int(m.group(1)))
+    return n + 1
+
+
+def checks_from(start):
+    return [f'{start + i}、{t}' for i, t in enumerate(CHECKS)]
 
 
 def span_of(tc: str) -> int:
@@ -92,13 +109,21 @@ RED_RUN_PR = '<w:rPr><w:color w:val="FF0000"/><w:sz w:val="18"/></w:rPr>'
 MARK_RE = re.compile(r'\u27e6([^\u27e7]*)\u27e7')
 
 
-def make_para(text: str) -> str:
+def make_para(text: str, red_all: bool = False) -> str:
     """生成一段：单倍行距、9pt。
 
     文本中用 ⟦…⟧ 包住的片段以红色 run 输出（台账来源数据标红），
     其余片段保持黑色。输出中不再保留记号本身。
+
+    red_all=True 时整段合成一个红 run（⟦⟧ 记号失效，直接去掉）：
+    用于「旁站内容」「旁站过程记录」两格；但「/」仍留黑。
     """
     body = ''
+    if red_all and text and text.strip() != '/':
+        plain = MARK_RE.sub(lambda m: m.group(1), text)
+        body = (f'<w:r>{RED_RUN_PR}<w:t xml:space="preserve">'
+                f'{escape(plain)}</w:t></w:r>')
+        return f'<w:p><w:pPr>{SPACING}{RUN_PR}</w:pPr>{body}</w:p>'
     if text:
         pos = 0
         for m in MARK_RE.finditer(text):
@@ -131,17 +156,27 @@ def rewrite_tcpr(tc: str, span: int, vmerge: str) -> str:
     return tc[:m.start()] + f'<w:tcPr>{prefix}{inner}</w:tcPr>' + tc[m.end():]
 
 
-def build_cell(tpl: str, span: int, vmerge: str, text: str) -> str:
+def build_cell(tpl: str, span: int, vmerge: str, text: str,
+               red_all: bool = False) -> str:
     """以 tpl 为外形模板，生成一格；text 写入其第一段。"""
     cell = rewrite_tcpr(tpl, span, vmerge)
-    return re.sub(PARA_RE, lambda _m: make_para(text), cell, count=1)
+    return re.sub(PARA_RE, lambda _m: make_para(text, red_all), cell, count=1)
 
 
-def build_multi_para_cell(tpl: str, span: int, texts) -> str:
-    """一格多段：把 tpl 的所有段落替换成 texts 依次生成的段落。"""
+def build_multi_para_cell(tpl: str, span: int, texts, red_range=None) -> str:
+    """一格多段：把 tpl 的所有段落替换成 texts 依次生成的段落。
+
+    red_range=(start, end)：该区间内的段落整段标红（过程记录条目），
+    区间外保持「⟦⟧ 才红」或全黑——固定格头与三条检查项即靠此留黑。
+    """
     cell = rewrite_tcpr(tpl, span, N)
     paras = PARA_RE.findall(cell)
-    body = ''.join(make_para(t) for t in texts) or make_para('')
+
+    def _mk(i, t):
+        red = red_range is not None and red_range[0] <= i < red_range[1]
+        return make_para(t, red)
+
+    body = ''.join(_mk(i, t) for i, t in enumerate(texts)) or make_para('')
     if not paras:
         return cell.replace('</w:tcPr>', '</w:tcPr>' + body, 1)
     first = cell.index(paras[0])
@@ -199,12 +234,16 @@ def rebuild_table(table: str, stats) -> str:
 
         built = []
         if spec.get('merge_paras'):
-            built.append(build_multi_para_cell(tpl, spec_cells[0][0],
-                                               texts + CHECKS))
+            built.append(build_multi_para_cell(
+                tpl, spec_cells[0][0],
+                texts + checks_from(next_check_no(texts)),
+                red_range=(1, len(texts))))  # 0 是「旁站过程记录：」固定格头，留黑
         else:
-            for span, vm in spec_cells:
+            red_cells = spec.get('red_cells', ())
+            for ci, (span, vm) in enumerate(spec_cells):
                 text = '' if vm == C else (texts.pop(0) if texts else '')
-                built.append(build_cell(tpl, span, vm, text))
+                built.append(build_cell(tpl, span, vm, text,
+                                        red_all=(ci in red_cells)))
 
         out.append(table[pos:matches[idx].start()])
         out.append(head + ''.join(built) + tail)
