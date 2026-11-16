@@ -682,7 +682,8 @@ def scan_jianli(book, mode):
             wp_rows.append({'date': main['start'].date(), 'start': main['start'],
                             'end': main['end'] or main['start'],
                             'sheet': name, 'r': r, 'vals': vals, 'cols': c,
-                            'ci_cloth': ci_cloth, 'ci_check': ci_check, 'ci_sup': ci_sup,
+                            'ci_cloth': ci_cloth, 'ci_pipe': ci_pipe,
+                            'ci_check': ci_check, 'ci_sup': ci_sup,
                             'cloth': _norm(_g(vals, ci_cloth)) if ci_cloth is not None else '',
                             'pipe': _norm(_g(vals, ci_pipe)) if ci_pipe is not None else '',
                             'check': _norm(_g(vals, ci_check)) if ci_check is not None else '',
@@ -711,6 +712,7 @@ def scan_jianli(book, mode):
                                '；'.join(content), tf(s0, s0), tf(e0, s0), recs,
                                source=[src(f'监理台账/{x["sheet"]}', x['r'],
                                            '、'.join(p for p in (
+                                               _cell_ref(x['cols'], x['ci_pipe']),
                                                _cell_ref(x['cols'], x['ci_cloth']),
                                                _cell_ref(x['cols'], x['ci_check']),
                                                _cell_ref(x['cols'], x['ci_sup'])) if p))
@@ -742,6 +744,11 @@ def scan_jianli(book, mode):
         sc = cols['加深炮孔']
         groups = {}
         cur = None      # 当前组：组首行给出日期/时间/位置，后续孔号行只有孔号+孔深
+        def _ang(vals, c):
+            """外插角原值：去尾部度号/「度」字后返回文本；空或 0 仍按原值返回（不造数）。"""
+            raw = _cv(vals, c, '外插角')
+            return re.sub(r'[°度]+\s*$', '', raw or '').strip()
+
         for r, vals in data['加深炮孔']:
             c = sc.at(r)
             if c is None:
@@ -756,11 +763,13 @@ def scan_jianli(book, mode):
                 if sp:
                     cur = {'start': sp['start'], 'end': sp['end'], 'head': vals,
                            'cols': c, 'r': r, 'r_last': r,
-                           'holes': [(vals, _nv(vals, c, '钻孔长度'))]}
+                           'holes': [(vals, _nv(vals, c, '钻孔长度'),
+                                      _ang(vals, c))]}
                     groups.setdefault(sp['start'].date(), []).append(cur)
                 continue
             if cur is not None and hi is not None and _nv(vals, c, '孔号') != '':
-                cur['holes'].append((vals, _nv(vals, c, '钻孔长度')))
+                cur['holes'].append((vals, _nv(vals, c, '钻孔长度'),
+                                     _ang(vals, c)))
                 cur['r_last'] = r
         if groups:
             k = max(groups)
@@ -801,17 +810,24 @@ def scan_jianli(book, mode):
                 c = gs[0]['cols']
                 holes = [h for x in gs for h in x['holes']]
                 depths = [h[1] for h in holes if h[1] != '']
+                # 外插角逐孔收集：只保留台账里非空的孔；空值（如 0/空格）不造数、不并入
+                angles = []
+                for _h, _d, _a in holes:
+                    if _a != '' and _a is not None:
+                        if _a not in angles:
+                            angles.append(_a)
                 head_m = _cv(v, c, '钻孔位置')
                 end_m = _cv(v, c, '终孔位置')
-                angle = re.sub(r'[°度]+\s*$', '', _cv(v, c, '外插角') or '').strip()
+                # 每个非空角度原值都保留（各自带度号），台账没写的孔不造数
+                ang_s = '、'.join(f'{a}°' for a in angles)
                 recs10.append('加深炮孔：施做 {}；掌子面里程 {}；当日 {} 孔；'
-                              '孔深 {} 米；终孔位置 {}；外插角 {}°。'.format(
+                              '孔深 {} 米；终孔位置 {}；外插角 {}。'.format(
                                   mk(obj['start'].strftime('%Y-%m-%d')),
                                   mk(dk(head_m)) if head_m not in ('', None) else '/',
                                   mk(len(holes)),
                                   mk('、'.join(str(d) for d in depths[:3])) + (f' 等{len(depths)}孔' if len(depths) > 3 else '') if depths else '/',
                                   mk(dk(end_m)) if end_m not in ('', None) else '/',
-                                  mk(num_s(angle)) if angle not in ('', None) else '/'))
+                                  (mk(ang_s) if angles else '/')))
                 _seg10 = f'{dk(head_m)}～{dk(end_m)}' if head_m not in ('', None) and end_m not in ('', None) else ''
                 c10.append(f'加深炮孔 {mk(_seg10)}（{mk(len(holes))} 孔）' if _seg10 else f'加深炮孔 {mk(len(holes))} 孔')
                 d10s.append(obj['start'])

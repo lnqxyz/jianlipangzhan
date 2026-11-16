@@ -10,7 +10,7 @@ description: >
   「生成旁站记录表」「按台账出旁站记录」「旁站表」或给出隧道施工台账要求出监理记录
   时使用。
 metadata:
-  version: "0.3.0"
+  version: "0.3.1"
   spec-aligned: "2026-11-14"
 ---
 

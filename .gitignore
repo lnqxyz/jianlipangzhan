@@ -1,4 +1,6 @@
 _build/
 _验收/*
 !_验收/验收单.md
-_archive/
+_archive/*
+!_验收/重跑/
+!_archive/样例数据-2026-11/
