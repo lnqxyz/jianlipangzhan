@@ -1,0 +1,16 @@
+# 在技能目录执行（SKILL.md 第 2 步命令约定）
+cd "/Users/lnq/Documents/智能体 skill/监理旁站记录/jianlipangzhan"
+L1="/Users/lnq/Documents/数字化监理/台账/淘金山隧道施工台账2026.11.9.xls"
+L3="/Users/lnq/Documents/数字化监理/台账/配料单及拌和物台账.xlsx"
+
+# 1) 提取三份台账中本类最新一条（本轮只传监理台账 + 配料单，2/4/5 用注浆台账，不在本轮）
+python3 scripts/extract_latest.py "$L1" "$L3" --pretty > /tmp/jlpz_20261115/extract.json
+
+# 2) 填模板（20 源行）
+python3 scripts/fill_docs.py /tmp/jlpz_20261115/extract.json assets/template-20rows.docx /tmp/jlpz_20261115/build --no 1
+
+# 3) 后处理（records=1，table-no=1，检查项按表号依据勾选）
+python3 scripts/postprocess.py /tmp/jlpz_20261115/build/raw-1.docx /tmp/jlpz_20261115/build/pp-1.docx --records 1 --table-no 1
+
+# 4) 合并残留修复
+python3 scripts/fix_merge.py /tmp/jlpz_20261115/build/pp-1.docx /tmp/jlpz_20261115/build/fin-1.docx

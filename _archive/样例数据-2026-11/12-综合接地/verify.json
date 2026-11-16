@@ -1,0 +1,28 @@
+{
+  "doc": "旁站记录表（综合接地）2026-11-03.docx",
+  "sha256": "7d24da0782ff4302b95ee3c3760de435e151e46968df553880786da52c67c591",
+  "date": "2026-11-03",
+  "weather": "/",
+  "temperature": "/",
+  "records": 1,
+  "check_yes_red": 0,
+  "check_blank": 3,
+  "numbering": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "red_runs": 6,
+  "red_texts": [
+    "2026-11-03",
+    "淘金山隧道",
+    "暗洞二衬 DK106+890～DK106+902",
+    "17:00",
+    "11-05 15:00",
+    "1、暗洞二衬（DK106+890～DK106+902）：接地钢筋安装 2026.11.3 17:00-2026.11.5 15:00；接地电阻 0.3Ω；监理报验 黄钰。"
+  ],
+  "selfcheck": "PASS",
+  "render_pages": 1,
+  "numbering_continuous": true
+}

@@ -1,0 +1,38 @@
+{
+  "ledger_date": "2026-11-08",
+  "ledger_files": [
+    {
+      "path": "/Users/lnq/Documents/数字化监理/台账/淘金山隧道施工台账2026.11.9.xls",
+      "sha256": "bd4c8eed79e30dfeabc3e633f37d5985bad6dba982b5ec138dad8aff1f42d6cb"
+    },
+    {
+      "path": "/Users/lnq/Documents/数字化监理/台账/配料单及拌和物台账.xlsx",
+      "sha256": "60f5c05c7dfdf27606e0be76826868eb7683bd1c8290bf8cfb7f2a5666f273b9"
+    }
+  ],
+  "table": {
+    "no": 7,
+    "title": "喷射混凝土",
+    "fields": {
+      "date": "2026-11-05",
+      "weather": "/",
+      "temperature": "/",
+      "project": "淘金山隧道",
+      "content": "上台阶 ⟦DK107+28.2～DK107+31.8⟧（⟦C30喷射⟧）",
+      "start": "⟦04:00⟧",
+      "end": "⟦07:28⟧"
+    },
+    "records": [
+      "1、上台阶：部位 ⟦DK107+28.2～DK107+31.8⟧；强度 ⟦C30喷射⟧；设计方量 ⟦16.34⟧ m³、实际 ⟦29.0⟧ m³；喷锚时间 ⟦4:00~7:28⟧。"
+    ],
+    "source": [
+      {
+        "sheet": "监理台账/上台阶开挖",
+        "row": 317,
+        "cells": "c27 喷锚时间、c28 砼强度、c29 砼设计方量（m3）、c30 砼实际方量（m3）"
+      }
+    ]
+  },
+  "missing": [],
+  "warnings": []
+}

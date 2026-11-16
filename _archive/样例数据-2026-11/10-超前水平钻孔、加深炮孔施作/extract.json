@@ -1,0 +1,39 @@
+{
+  "ledger_date": "2026-11-08",
+  "ledger_files": [
+    {
+      "path": "/Users/lnq/Documents/数字化监理/台账/淘金山隧道施工台账2026.11.9.xls",
+      "sha256": "bd4c8eed79e30dfeabc3e633f37d5985bad6dba982b5ec138dad8aff1f42d6cb"
+    },
+    {
+      "path": "/Users/lnq/Documents/数字化监理/台账/配料单及拌和物台账.xlsx",
+      "sha256": "60f5c05c7dfdf27606e0be76826868eb7683bd1c8290bf8cfb7f2a5666f273b9"
+    }
+  ],
+  "table": {
+    "no": 10,
+    "title": "超前水平钻孔、加深炮孔施作",
+    "fields": {
+      "date": "2026-10-31",
+      "weather": "/",
+      "temperature": "/",
+      "project": "淘金山隧道",
+      "content": "加深炮孔 ⟦DK107+22.6～DK107+31.6⟧（⟦3⟧ 孔）",
+      "start": "⟦05:40⟧",
+      "end": "⟦06:30⟧"
+    },
+    "records": [
+      "1、加深炮孔：施做 ⟦2026-10-31⟧；掌子面里程 ⟦DK107+22.6⟧；当日 ⟦3⟧ 孔；孔深 ⟦9.0、9.0、9.0⟧ 米；终孔位置 ⟦DK107+31.6⟧；外插角 ⟦27⟧°。"
+    ],
+    "source": [
+      {
+        "sheet": "监理台账/加深炮孔",
+        "row": 672,
+        "cells": "c2 钻孔位置、c3 日期、c4 时间、c5 孔号、c8 钻孔长度、c9 终孔位置、c7 外插角",
+        "row_end": 674
+      }
+    ]
+  },
+  "missing": [],
+  "warnings": []
+}

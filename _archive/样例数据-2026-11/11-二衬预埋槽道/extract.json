@@ -1,0 +1,39 @@
+{
+  "ledger_date": "2026-11-08",
+  "ledger_files": [
+    {
+      "path": "/Users/lnq/Documents/数字化监理/台账/淘金山隧道施工台账2026.11.9.xls",
+      "sha256": "bd4c8eed79e30dfeabc3e633f37d5985bad6dba982b5ec138dad8aff1f42d6cb"
+    },
+    {
+      "path": "/Users/lnq/Documents/数字化监理/台账/配料单及拌和物台账.xlsx",
+      "sha256": "60f5c05c7dfdf27606e0be76826868eb7683bd1c8290bf8cfb7f2a5666f273b9"
+    }
+  ],
+  "table": {
+    "no": 11,
+    "title": "二衬预埋槽道",
+    "fields": {
+      "date": "2026-11-07",
+      "weather": "/",
+      "temperature": "/",
+      "project": "淘金山隧道",
+      "content": "二衬 ⟦DK106+890-902⟧　槽道里程 ⟦DK106+900.9⟧",
+      "start": "⟦18:00⟧",
+      "end": "⟦18:30⟧"
+    },
+    "records": [
+      "1、槽道安装：二衬里程 ⟦DK106+890-902⟧；槽道里程 ⟦DK106+900.9⟧；型号 ⟦H3⟧；长度 ⟦1500⟧ mm；根数 ⟦1⟧；安装位置 ⟦拱顶右偏500mm⟧；槽道间距 /；中心距施工缝 ⟦1.1m⟧。",
+      "2、安装时间：⟦18:00-18:30⟧。"
+    ],
+    "source": [
+      {
+        "sheet": "监理台账/接触网槽道",
+        "row": 114,
+        "cells": "c2 二衬里程、c3 槽道里程、c4 槽道型号、c5 长度（mm）、c6 根数、c7 安装位置、c8 槽道间距（mm)、c9 中心距离施工缝间距、c10 施工日期、c11 时间"
+      }
+    ]
+  },
+  "missing": [],
+  "warnings": []
+}

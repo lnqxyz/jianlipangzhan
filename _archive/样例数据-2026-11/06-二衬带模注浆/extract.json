@@ -1,0 +1,38 @@
+{
+  "ledger_date": "2026-11-08",
+  "ledger_files": [
+    {
+      "path": "/Users/lnq/Documents/数字化监理/台账/淘金山隧道施工台账2026.11.9.xls",
+      "sha256": "bd4c8eed79e30dfeabc3e633f37d5985bad6dba982b5ec138dad8aff1f42d6cb"
+    },
+    {
+      "path": "/Users/lnq/Documents/数字化监理/台账/配料单及拌和物台账.xlsx",
+      "sha256": "60f5c05c7dfdf27606e0be76826868eb7683bd1c8290bf8cfb7f2a5666f273b9"
+    }
+  ],
+  "table": {
+    "no": 6,
+    "title": "二衬带模注浆",
+    "fields": {
+      "date": "2026-11-08",
+      "weather": "/",
+      "temperature": "/",
+      "project": "淘金山隧道",
+      "content": "二衬 ⟦DK106+890～DK106+902⟧",
+      "start": "⟦21:05⟧",
+      "end": "⟦21:50⟧"
+    },
+    "records": [
+      "1、二衬带模注浆：衬砌段 ⟦DK106+890～DK106+902⟧；砼强度 ⟦C35⟧；注浆时间 ⟦2026.11.8 21:05~21.50⟧；带模注浆水泥浆用量 ⟦0.22⟧ m³。"
+    ],
+    "source": [
+      {
+        "sheet": "监理台账/暗洞二衬",
+        "row": 49,
+        "cells": "c8 砼设计标号、c31 注浆时间、c32 带模注浆  水泥浆用量（m3）"
+      }
+    ]
+  },
+  "missing": [],
+  "warnings": []
+}

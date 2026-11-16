@@ -1,0 +1,38 @@
+{
+  "ledger_date": "2026-11-08",
+  "ledger_files": [
+    {
+      "path": "/Users/lnq/Documents/数字化监理/台账/淘金山隧道施工台账2026.11.9.xls",
+      "sha256": "bd4c8eed79e30dfeabc3e633f37d5985bad6dba982b5ec138dad8aff1f42d6cb"
+    },
+    {
+      "path": "/Users/lnq/Documents/数字化监理/台账/配料单及拌和物台账.xlsx",
+      "sha256": "60f5c05c7dfdf27606e0be76826868eb7683bd1c8290bf8cfb7f2a5666f273b9"
+    }
+  ],
+  "table": {
+    "no": 3,
+    "title": "超前小导管注浆",
+    "fields": {
+      "date": "2026-11-01",
+      "weather": "/",
+      "temperature": "/",
+      "project": "淘金山隧道",
+      "content": "Ⅱ型小导管 ⟦DK107+24.6～DK107+29.1⟧（⟦47⟧ 根）",
+      "start": "⟦15:06⟧",
+      "end": "⟦16:50⟧"
+    },
+    "records": [
+      "1、超前小导管注浆：里程 ⟦DK107+24.6～DK107+29.1⟧；超前类型 ⟦Ⅱ型小导管⟧；超前长度 ⟦4.5⟧ m；根数 ⟦47⟧；注浆时间 ⟦15:06~16:50⟧；注浆量 ⟦434.2⟧ m³；搭接 ⟦2.5⟧ m。"
+    ],
+    "source": [
+      {
+        "sheet": "监理台账/超前小导管",
+        "row": 127,
+        "cells": "c2 开始里程、c3 结束里程、c4 超前类型、c5 有效长度（m）、c6 超前长度（m）、c7 施做日期、c8 注浆时间、c9 注浆量（m³）、c10 搭接（m）、c11 根数"
+      }
+    ]
+  },
+  "missing": [],
+  "warnings": []
+}

@@ -1,0 +1,28 @@
+{
+  "doc": "旁站记录表（喷射混凝土）2026-11-05.docx",
+  "sha256": "6cb71e113e86b79b7b93e5a27a5ec940547ba55a4e4f428af8c394d37e919339",
+  "date": "2026-11-05",
+  "weather": "/",
+  "temperature": "/",
+  "records": 1,
+  "check_yes_red": 0,
+  "check_blank": 3,
+  "numbering": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "red_runs": 6,
+  "red_texts": [
+    "2026-11-05",
+    "淘金山隧道",
+    "上台阶 DK107+28.2～DK107+31.8（C30喷射）",
+    "04:00",
+    "07:28",
+    "1、上台阶：部位 DK107+28.2～DK107+31.8；强度 C30喷射；设计方量 16.34 m³、实际 29.0 m³；喷锚时间 4:00~7:28。"
+  ],
+  "selfcheck": "PASS",
+  "render_pages": 1,
+  "numbering_continuous": true
+}

@@ -1,0 +1,30 @@
+{
+  "doc": "旁站记录表（二衬预埋槽道）2026-11-07.docx",
+  "sha256": "bd7592eacf3ae7fbd999450dac3b2218812477237e61b37e2e14c3b3cb8b054f",
+  "date": "2026-11-07",
+  "weather": "/",
+  "temperature": "/",
+  "records": 2,
+  "check_yes_red": 0,
+  "check_blank": 3,
+  "numbering": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "red_runs": 7,
+  "red_texts": [
+    "2026-11-07",
+    "淘金山隧道",
+    "二衬 DK106+890-902　槽道里程 DK106+900.9",
+    "18:00",
+    "18:30",
+    "1、槽道安装：二衬里程 DK106+890-902；槽道里程 DK106+900.9；型号 H3；长度 1500 mm；根数 1；安装位置 拱顶右偏500mm；槽道间距 /；中心距施工缝 1.1m。",
+    "2、安装时间：18:00-18:30。"
+  ],
+  "selfcheck": "PASS",
+  "render_pages": 1,
+  "numbering_continuous": true
+}

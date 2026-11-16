@@ -1,0 +1,38 @@
+{
+  "ledger_date": "2026-11-08",
+  "ledger_files": [
+    {
+      "path": "/Users/lnq/Documents/数字化监理/台账/淘金山隧道施工台账2026.11.9.xls",
+      "sha256": "bd4c8eed79e30dfeabc3e633f37d5985bad6dba982b5ec138dad8aff1f42d6cb"
+    },
+    {
+      "path": "/Users/lnq/Documents/数字化监理/台账/配料单及拌和物台账.xlsx",
+      "sha256": "60f5c05c7dfdf27606e0be76826868eb7683bd1c8290bf8cfb7f2a5666f273b9"
+    }
+  ],
+  "table": {
+    "no": 12,
+    "title": "综合接地",
+    "fields": {
+      "date": "2026-11-03",
+      "weather": "/",
+      "temperature": "/",
+      "project": "淘金山隧道",
+      "content": "暗洞二衬 ⟦DK106+890～DK106+902⟧",
+      "start": "⟦17:00⟧",
+      "end": "⟦11-05 15:00⟧"
+    },
+    "records": [
+      "1、暗洞二衬（⟦DK106+890～DK106+902⟧）：接地钢筋安装 ⟦2026.11.3 17:00-2026.11.5 15:00⟧；接地电阻 ⟦0.3Ω⟧；监理报验 ⟦黄钰⟧。"
+    ],
+    "source": [
+      {
+        "sheet": "监理台账/暗洞二衬",
+        "row": 49,
+        "cells": "c19 钢筋、接地安装、c21 接地电阻、c12 监理报验"
+      }
+    ]
+  },
+  "missing": [],
+  "warnings": []
+}

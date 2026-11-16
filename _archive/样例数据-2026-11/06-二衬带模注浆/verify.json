@@ -1,0 +1,28 @@
+{
+  "doc": "旁站记录表（二衬带模注浆）2026-11-08.docx",
+  "sha256": "6878c0163f2433880cd71ca8108eb214607d219736033c881bdd30278638d89f",
+  "date": "2026-11-08",
+  "weather": "/",
+  "temperature": "/",
+  "records": 1,
+  "check_yes_red": 0,
+  "check_blank": 3,
+  "numbering": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "red_runs": 6,
+  "red_texts": [
+    "2026-11-08",
+    "淘金山隧道",
+    "二衬 DK106+890～DK106+902",
+    "21:05",
+    "21:50",
+    "1、二衬带模注浆：衬砌段 DK106+890～DK106+902；砼强度 C35；注浆时间 2026.11.8 21:05~21.50；带模注浆水泥浆用量 0.22 m³。"
+  ],
+  "selfcheck": "PASS",
+  "render_pages": 1,
+  "numbering_continuous": true
+}

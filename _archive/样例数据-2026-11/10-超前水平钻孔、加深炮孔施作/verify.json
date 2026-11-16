@@ -1,0 +1,28 @@
+{
+  "doc": "旁站记录表（超前水平钻孔、加深炮孔施作）2026-10-31.docx",
+  "sha256": "113e065ec3388913bfc93f5f4b8e6522a55a15ec7c50123abeccb06e55847dfa",
+  "date": "2026-10-31",
+  "weather": "/",
+  "temperature": "/",
+  "records": 1,
+  "check_yes_red": 0,
+  "check_blank": 3,
+  "numbering": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "red_runs": 6,
+  "red_texts": [
+    "2026-10-31",
+    "淘金山隧道",
+    "加深炮孔 DK107+22.6～DK107+31.6（3 孔）",
+    "05:40",
+    "06:30",
+    "1、加深炮孔：施做 2026-10-31；掌子面里程 DK107+22.6；当日 3 孔；孔深 9.0、9.0、9.0 米；终孔位置 DK107+31.6；外插角 27°。"
+  ],
+  "selfcheck": "PASS",
+  "render_pages": 1,
+  "numbering_continuous": true
+}
